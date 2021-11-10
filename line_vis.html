@@ -1,0 +1,238 @@
+<html>
+    <head><title>Line Visual</title></head>
+    <body>
+        <script>
+            var iCnt = 0;
+            var divArr = new Array();
+            
+            function addSpecification()
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = '<center>Larger <input type="radio" id="head'+iCnt+'" name="head_tail'+iCnt+'" onchange="calcLine()" checked><label for="head">Head</label> <input type="radio" id="tail'+iCnt+'" name="head_tail'+iCnt+'" onchange="calcLine()"><label for="tail">Tail</label> | Segment Size: <select id="segNum'+iCnt+'" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></center><br>';
+                
+                document.body.appendChild(customDiv);
+                divArr[iCnt] = customDiv;
+                iCnt++;
+
+                calcLine();
+            }
+            
+            function delSpecification()
+            {
+                if (iCnt)
+                {
+                    iCnt--;
+                    document.body.removeChild(divArr[iCnt]);
+                }
+
+                calcLine();
+            }
+        </script>
+
+        <center>
+        <div id="scrollWin" style="height:70%;width:90%;border:1px solid #ccc;overflow:scroll;">
+        <canvas id="myCanvas">Your browser does not support the HTML5 canvas tag.</canvas>
+        </div>
+
+        <br>
+
+        <button onclick="addSpecification()">Add</button> <button onclick="delSpecification()">Delete</button>
+
+        <br><br>
+
+        Segement Size: <select id="iniSegNum" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        </center>
+
+        <br>
+
+        <script>
+            function drawLine(xL, yL, h, color, ctx)
+            {
+                var i, x, y, unit;
+                
+                unit = xL / yL;
+                
+                for (i=0; i < yL; i++)
+                {
+                    x = parseInt(i * unit);
+                    y = i;
+                    
+                    ctx.fillStyle = color[i];
+                    ctx.fillRect(x*10, h - y*10, 10, -10);
+                }
+            }
+
+            function calcLine()
+            {
+                var i;
+                var c = document.getElementById("myCanvas");
+                var ctx = c.getContext("2d");
+                var iniSegSz;
+                var segSz = new Array();
+                var lgrHead = new Array();
+                var headSz = new Array();
+                var tailSz = new Array();
+                var tailCnt = new Array();
+
+                ctx.clearRect(0, 0, c.width, c.height);
+
+                if (iCnt == 0)
+                return;
+
+
+                // find initial headSz, tailSz, and tailCnt values
+                iniSegSz = parseInt(document.getElementById('iniSegNum').value);
+                
+                if (iniSegSz == 1)
+                document.getElementById('head'+0).checked = true;
+
+                for (i=0; i < iCnt; i++)
+                {
+                    segSz[i] = parseInt(document.getElementById('segNum'+i).value);
+
+                    if (document.getElementById('head'+i).checked == true)
+                    lgrHead[i] = true;
+                    else
+                    lgrHead[i] = false;
+                }
+
+                if (lgrHead[0])
+                {
+                    headSz[0] = iniSegSz + 1;
+                    tailSz[0] = iniSegSz;
+                }
+                else
+                {
+                    headSz[0] = iniSegSz - 1;
+                    tailSz[0] = iniSegSz;
+                }
+
+                tailCnt[0] = segSz[0];
+
+
+                // find headSz, tailSz, and tailCnt values
+                for (i=1; i < iCnt; i++)
+                {
+                    tailSz[i] = headSz[i-1] + tailSz[i-1] * tailCnt[i-1];
+
+                    if (lgrHead[i])
+                    headSz[i] = tailSz[i] + tailSz[i-1];
+                    else
+                    headSz[i] = tailSz[i] - tailSz[i-1];
+
+                    tailCnt[i] = segSz[i];
+                }
+
+                for (i=0; i < iCnt; i++)
+                console.log(headSz[i], tailSz[i], tailCnt[i]);
+
+                
+                // find the line coordinates
+                var x, y, xPrior, yPrior;
+                var xTailSeg;
+                var offsetSz = 0;
+                var flip_flop = 0; // off/on
+
+   
+                x = tailCnt[0] + 1;
+                y = headSz[0] + tailSz[0] * tailCnt[0];
+                
+                if (headSz[0] > tailSz[0])
+                {
+                    flip_flop = !flip_flop;
+
+                    if (flip_flop)
+                    offsetSz += headSz[0];
+                }
+                
+                xTailSeg = 1;
+                xPrior = x;
+                yPrior = y;
+                for (i=1; i < iCnt; i++)
+                {
+                    if (headSz[i] > tailSz[i])
+                    {
+                        x = xPrior * (tailCnt[i] + 1) + xTailSeg;
+                        y = yPrior * (tailCnt[i] + 1) + tailSz[i-1];
+
+                        flip_flop = !flip_flop;
+
+                        if (flip_flop)
+                        offsetSz += tailSz[i] + tailSz[i-1];
+                    }
+                    else
+                    {
+                        x = xPrior * (tailCnt[i] + 1) - xTailSeg;
+                        y = yPrior * (tailCnt[i] + 1) - tailSz[i-1];
+                        
+                        if (flip_flop)
+                        offsetSz += tailSz[i] - tailSz[i-1];
+                    }
+                    
+                    xTailSeg = xPrior;
+                    xPrior = x;
+                    yPrior = y;
+                }
+                
+                // double length for offset
+                if (offsetSz)
+                {
+                    x *= 2; 
+                    y *= 2;
+                }
+
+
+                // find segment colors
+                var j;
+                var segColors = new Array();
+                var iSegCol = 0;
+                var color = new Array();
+                
+
+                for (i=0; i < tailSz[0]*tailCnt[0]; i++)
+                segColors[iSegCol++] = "#77BB77";
+
+                for (i=0; i < headSz[0]; i++)
+                segColors[iSegCol++] = "#5555FF";
+                
+                for (j=1; j < iCnt; j++)
+                {
+                    for (i=0; i < tailSz[j]*(tailCnt[j]-1); i++)
+                    segColors[iSegCol++] = segColors[i%tailSz[j]];
+
+                    for (i=0; i < headSz[j]; i++)
+                    segColors[iSegCol++] = "#5555FF";
+                }
+
+
+                for (i=0; i < y; i++)
+                color[i] = "#777777";
+
+                for (i=0; i < iSegCol; i++)
+                color[i+offsetSz] = segColors[i];
+
+
+                // resize canvas
+                if (x * 10 < document.getElementById('scrollWin').clientWidth)
+                c.width = document.getElementById('scrollWin').clientWidth;
+                else
+                c.width = x * 10;
+
+                if (y * 10 < document.getElementById('scrollWin').clientHeight)
+                c.height = document.getElementById('scrollWin').clientHeight;
+                else
+                c.height = y * 10;
+
+
+                drawLine(x, y, c.height, color, ctx);
+                
+                console.log("x:%i y:%i", x, y);
+                console.log("---");
+                
+                document.getElementById('scrollWin').scrollTop = document.getElementById('scrollWin').scrollHeight;
+            }
+        </script>
+    </body>
+</html>
