@@ -3,49 +3,110 @@
     <body>
         <script>
             var iCnt = 0;
-            var divArr = new Array();
+            var divSpecCtrls = new Array();
+
+            var divSpecCnt = 0;
+            var divSpecs = new Array();
             
-            function addSpecification()
+
+            function addSpecControls()
             {
                 var customDiv = document.createElement('div');
 
                 customDiv.id = 'content';
                 customDiv.innerHTML = '<center>Larger <input type="radio" id="head'+iCnt+'" name="head_tail'+iCnt+'" onchange="calcLine()" checked><label for="head">Head</label> <input type="radio" id="tail'+iCnt+'" name="head_tail'+iCnt+'" onchange="calcLine()"><label for="tail">Tail</label> | Segment Size: <select id="segNum'+iCnt+'" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></center><br>';
                 
-                document.body.appendChild(customDiv);
-                divArr[iCnt] = customDiv;
+                document.getElementById("segControls").appendChild(customDiv);
+                divSpecCtrls[iCnt] = customDiv;
                 iCnt++;
 
                 calcLine();
             }
             
-            function delSpecification()
+            function delSpecControls()
             {
                 if (iCnt)
                 {
                     iCnt--;
-                    document.body.removeChild(divArr[iCnt]);
+                    document.getElementById("segControls").removeChild(divSpecCtrls[iCnt]);
                 }
 
                 calcLine();
             }
+
+            function addSpec(headSz, tailSz, tailCnt, x, y, offset)
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = "headSz:"+headSz+" tailSz:"+tailSz+" tailCnt:"+tailCnt+"<br>x:"+x+" y:"+y+" offset:"+offset+"<br><br>";
+                
+                document.getElementById("lineSpec").appendChild(customDiv);
+                divSpecs[divSpecCnt] = customDiv;
+                divSpecCnt++;
+            }
+
+            function delSpecs()
+            {
+                var i;
+
+                for (i=0; i < divSpecCnt; i++)
+                document.getElementById("lineSpec").removeChild(divSpecs[i]);
+                
+                divSpecCnt = 0;
+            }
         </script>
 
+        <table style="width:100%;">
+        <tr><td>
         <center>
-        <div id="scrollWin" style="height:70%;width:90%;border:1px solid #ccc;overflow:scroll;">
+        <div id="scrollWin" style="height:480px;width:640px;border:1px solid #ccc;overflow:scroll;">
         <canvas id="myCanvas">Your browser does not support the HTML5 canvas tag.</canvas>
         </div>
 
         <br>
 
-        <button onclick="addSpecification()">Add</button> <button onclick="delSpecification()">Delete</button>
+        <button onclick="addSpecControls()">Add</button> <button onclick="delSpecControls()">Delete</button>
 
         <br><br>
 
-        Segement Size: <select id="iniSegNum" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        Segment Size: <select id="iniSegNum" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
         </center>
 
+        <p id="segControls"></p>
+
+        <hr>
+        Math:<br>
+        <center>[Find Next Coordinates]</center>
+        x = prior_x * (tailCnt + 1) +/- prior_prior_x<br>
+        y = prior_y * (tailCnt + 1) +/- prior_tailSz<br>
         <br>
+        <center>[Draw a Line]</center>
+        d = X / Y;<br>
+        for (i=0; i < Y; i++)<br>
+        PutPixel(i * d, i); // PutPixel(int x, int y)<br>
+        <br>
+        <center>[Find Next Values]</center>
+        headSz = prior_headSz + prior_tailSz * prior_tailCnt +/- prior_tailSz<br>
+        tailSz = prior_headSz + prior_tailSz * prior_tailCnt<br>
+        <br>
+        <hr>
+        Notes:<br>
+        <br>
+        This document describes finding coordinates to represent a raster line.<br>
+        <br>
+        The offset is added to move the head segment on top of the tail.<br>
+        <br>
+        When there is an offset the line size is doubled to account for it.<br>
+        <br>
+        The segment size can be any integer to map any possible raster line.<br>
+        <br>
+        
+        </td><td style="vertical-align:top;border:1px solid #ccc;">
+        <center>Line Specification:</center>
+        <p id="lineSpec"></p>
+        </td></tr>
+        </table>
 
         <script>
             function drawLine(xL, yL, h, color, ctx)
@@ -77,6 +138,7 @@
                 var tailCnt = new Array();
 
                 ctx.clearRect(0, 0, c.width, c.height);
+                delSpecs();
 
                 if (iCnt == 0)
                 return;
@@ -125,10 +187,7 @@
                     tailCnt[i] = segSz[i];
                 }
 
-                for (i=0; i < iCnt; i++)
-                console.log(headSz[i], tailSz[i], tailCnt[i]);
 
-                
                 // find the line coordinates
                 var x, y, xPrior, yPrior;
                 var xTailSeg;
@@ -147,6 +206,8 @@
                     offsetSz += headSz[0];
                 }
                 
+                addSpec(headSz[0], tailSz[0], tailCnt[0], x, y, offsetSz);
+
                 xTailSeg = 1;
                 xPrior = x;
                 yPrior = y;
@@ -171,6 +232,8 @@
                         offsetSz += tailSz[i] - tailSz[i-1];
                     }
                     
+                    addSpec(headSz[i], tailSz[i], tailCnt[i], x, y, offsetSz);
+
                     xTailSeg = xPrior;
                     xPrior = x;
                     yPrior = y;
@@ -233,9 +296,6 @@
 
 
                 drawLine(x, y, c.height, color, ctx);
-                
-                console.log("x:%i y:%i", x, y);
-                console.log("---");
                 
                 document.getElementById('scrollWin').scrollTop = document.getElementById('scrollWin').scrollHeight;
             }
