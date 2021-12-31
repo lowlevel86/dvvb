@@ -1,0 +1,722 @@
+<html>
+    <head><title>Compare Lines</title></head>
+    <body>
+        <script>
+            var iCntA = 0;
+            var divSpecCtrlsA = new Array();
+            var divSpecCntA = 0;
+            var divSpecsA = new Array();
+
+            function addSpecControlsA()
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = '<center>Lgr <input type="radio" id="headA'+iCntA+'" name="head_tailA'+iCntA+'" onchange="calcLineA()" checked><label for="headA">H</label> <input type="radio" id="tailA'+iCntA+'" name="head_tailA'+iCntA+'" onchange="calcLineA()"><label for="tailA">T</label> | Seg Sz: <select id="segNumA'+iCntA+'" onchange="calcLineA()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></center><br>';
+                
+                document.getElementById("segControlsA").appendChild(customDiv);
+                divSpecCtrlsA[iCntA] = customDiv;
+                iCntA++;
+
+                calcLineA();
+            }
+            function delSpecControlsA()
+            {
+                if (iCntA)
+                {
+                    iCntA--;
+                    document.getElementById("segControlsA").removeChild(divSpecCtrlsA[iCntA]);
+                }
+                calcLineA();
+            }
+            function addSpecA(headSz, tailSz, tailCnt, x, y, offset)
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = "headSz:"+headSz+" tailSz:"+tailSz+" tailCnt:"+tailCnt+"<br>x:"+x+" y:"+y+" offset:"+offset+"<br><br>";
+                
+                document.getElementById("lineSpecA").appendChild(customDiv);
+                divSpecsA[divSpecCntA] = customDiv;
+                divSpecCntA++;
+            }
+            function delSpecsA()
+            {
+                var i;
+                for (i=0; i < divSpecCntA; i++)
+                document.getElementById("lineSpecA").removeChild(divSpecsA[i]);
+                divSpecCntA = 0;
+            }
+
+
+            var iCntB = 0;
+            var divSpecCtrlsB = new Array();
+            var divSpecCntB = 0;
+            var divSpecsB = new Array();
+
+            function addSpecControlsB()
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = '<center>Lgr <input type="radio" id="headB'+iCntB+'" name="head_tailB'+iCntB+'" onchange="calcLineB()" checked><label for="headB">H</label> <input type="radio" id="tailB'+iCntB+'" name="head_tailB'+iCntB+'" onchange="calcLineB()"><label for="tailB">T</label> | Seg Sz: <select id="segNumB'+iCntB+'" onchange="calcLineB()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></center><br>';
+                
+                document.getElementById("segControlsB").appendChild(customDiv);
+                divSpecCtrlsB[iCntB] = customDiv;
+                iCntB++;
+
+                calcLineB();
+            }
+            function delSpecControlsB()
+            {
+                if (iCntB)
+                {
+                    iCntB--;
+                    document.getElementById("segControlsB").removeChild(divSpecCtrlsB[iCntB]);
+                }
+                calcLineB();
+            }
+            function addSpecB(headSz, tailSz, tailCnt, x, y, offset)
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = "headSz:"+headSz+" tailSz:"+tailSz+" tailCnt:"+tailCnt+"<br>x:"+x+" y:"+y+" offset:"+offset+"<br><br>";
+                
+                document.getElementById("lineSpecB").appendChild(customDiv);
+                divSpecsB[divSpecCntB] = customDiv;
+                divSpecCntB++;
+            }
+            function delSpecsB()
+            {
+                var i;
+                for (i=0; i < divSpecCntB; i++)
+                document.getElementById("lineSpecB").removeChild(divSpecsB[i]);
+                divSpecCntB = 0;
+            }
+
+
+            var iCntC = 0;
+            var divSpecCtrlsC = new Array();
+            var divSpecCntC = 0;
+            var divSpecsC = new Array();
+
+            function addSpecControlsC()
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = '<center>Lgr <input type="radio" id="headC'+iCntC+'" name="head_tailC'+iCntC+'" onchange="calcLineC()" checked><label for="headC">H</label> <input type="radio" id="tailC'+iCntC+'" name="head_tailC'+iCntC+'" onchange="calcLineC()"><label for="tailC">T</label> | Seg Sz: <select id="segNumC'+iCntC+'" onchange="calcLineC()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></center><br>';
+                
+                document.getElementById("segControlsC").appendChild(customDiv);
+                divSpecCtrlsC[iCntC] = customDiv;
+                iCntC++;
+
+                calcLineC();
+            }
+            function delSpecControlsC()
+            {
+                if (iCntC)
+                {
+                    iCntC--;
+                    document.getElementById("segControlsC").removeChild(divSpecCtrlsC[iCntC]);
+                }
+                calcLineC();
+            }
+            function addSpecC(headSz, tailSz, tailCnt, x, y, offset)
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = "headSz:"+headSz+" tailSz:"+tailSz+" tailCnt:"+tailCnt+"<br>x:"+x+" y:"+y+" offset:"+offset+"<br><br>";
+                
+                document.getElementById("lineSpecC").appendChild(customDiv);
+                divSpecsC[divSpecCntC] = customDiv;
+                divSpecCntC++;
+            }
+            function delSpecsC()
+            {
+                var i;
+                for (i=0; i < divSpecCntC; i++)
+                document.getElementById("lineSpecC").removeChild(divSpecsC[i]);
+                divSpecCntC = 0;
+            }
+
+        </script>
+        <center>
+        <div style="width:100%; height:50%; white-space:nowrap;">
+        <div id="scrollWinA" style="display:inline-block; width:32%; height:90%; overflow:scroll; border:1px solid; line-height:80px; text-align:center; margin-bottom:4px;">
+        <canvas id="canvasA" onmousemove="drawCursorA(event)" onclick="staticCursorA(event)">Your browser does not support the HTML5 canvas tag.</canvas>
+        </div>
+
+        <div id="scrollWinB" style="display:inline-block; width:32%; height:90%; overflow:scroll; border:1px solid; line-height:80px; text-align:center; margin-bottom:4px;">
+        <canvas id="canvasB" onmousemove="drawCursorB(event)" onclick="staticCursorB(event)">Your browser does not support the HTML5 canvas tag.</canvas>
+        </div>
+        
+        <div id="scrollWinC" style="display:inline-block; width:32%; height:90%; overflow:scroll; border:1px solid; line-height:80px; text-align:center; margin-bottom:4px;">
+        <canvas id="canvasC" onmousemove="drawCursorC(event)" onclick="staticCursorC(event)">Your browser does not support the HTML5 canvas tag.</canvas>
+        </div>
+        
+        </div>
+        </center>
+        <hr>
+
+        <table style="width:100%;">
+        <tr>
+        <td style="width:32%">
+        <center>
+        <button onclick="addSpecControlsA()">Add</button> <button onclick="delSpecControlsA()">Delete</button>
+        <br><br>
+        Segment Size: <select id="iniSegNumA" onchange="calcLineA()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        </center>
+        <p id="segControlsA"></p>
+        </td>
+
+        <td style="width:32%">
+        <center>
+        <button onclick="addSpecControlsB()">Add</button> <button onclick="delSpecControlsB()">Delete</button>
+        <br><br>
+        Segment Size: <select id="iniSegNumB" onchange="calcLineB()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        </center>
+        <p id="segControlsB"></p>
+        </td>
+
+        <td style="width:32%">
+        <center>
+        <button onclick="addSpecControlsC()">Add</button> <button onclick="delSpecControlsC()">Delete</button>
+        <br><br>
+        Segment Size: <select id="iniSegNumC" onchange="calcLineC()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        </center>
+        <p id="segControlsC"></p>
+        </td>
+        </tr>
+
+        <tr>
+        <td style="vertical-align:top;border:1px solid #ccc;">
+            <center>Line Specification:</center>
+            <p id="lineSpecA"></p>    
+        </td>
+        <td style="vertical-align:top;border:1px solid #ccc;">
+            <center>Line Specification:</center>
+            <p id="lineSpecB"></p>    
+        </td>
+        <td style="vertical-align:top;border:1px solid #ccc;">
+            <center>Line Specification:</center>
+            <p id="lineSpecC"></p>    
+        </td>
+        
+        </tr>
+
+        </table>
+
+        <hr>
+        Notes:<br>
+        <br>
+        This gaphical calculator can help with raster to vector conversion programming.<br>
+        <br>
+        After adding three different line patterns, click in one of the windows to change the position of a static cursor.<br>
+        <br>
+        
+        <script>
+            function drawLine(xL, yL, h, color, ctx)
+            {
+                var i, x, y, unit;
+                
+                unit = xL / yL;
+                
+                for (i=0; i < yL; i++)
+                {
+                    x = parseInt(i * unit);
+                    y = i;
+                    
+                    ctx.fillStyle = color[i];
+                    ctx.fillRect(x*10, h - y*10, 10, -10);
+                }
+            }
+
+            var imageDataA = 0;
+            var imageDataB = 0;
+            var imageDataC = 0;
+            var xOffsetA = 0, yOffsetA = 0;
+            var xOffsetB = 0, yOffsetB = 0;
+            var xOffsetC = 0, yOffsetC = 0;
+            var xStaticCur = 0, yStaticCur = 0;
+            function calcLine(c, iCnt, scrollWindow)
+            {
+                var i;
+                var iniSegSz;
+                var ctx = c.getContext("2d");
+                var segSz = new Array();
+                var lgrHead = new Array();
+                var headSz = new Array();
+                var tailSz = new Array();
+                var tailCnt = new Array();
+
+                ctx.clearRect(0, 0, c.width, c.height);
+                
+                if (c == document.getElementById("canvasA"))
+                delSpecsA();
+
+                if (c == document.getElementById("canvasB"))
+                delSpecsB();
+
+                if (c == document.getElementById("canvasC"))
+                delSpecsC();
+
+                if (iCnt == 0)
+                {
+                    if (c == document.getElementById("canvasA"))
+                    imageDataA = ctx.getImageData(0, 0, c.width, c.height);
+
+                    if (c == document.getElementById("canvasB"))
+                    imageDataB = ctx.getImageData(0, 0, c.width, c.height);
+
+                    if (c == document.getElementById("canvasC"))
+                    imageDataC = ctx.getImageData(0, 0, c.width, c.height);
+                    return;
+                }
+
+
+                // find initial headSz, tailSz, and tailCnt values
+                if (c == document.getElementById("canvasA"))
+                {
+                    iniSegSz = parseInt(document.getElementById('iniSegNumA').value);
+
+                    if (iniSegSz == 1)
+                    document.getElementById('headA'+0).checked = true;
+
+                    for (i=0; i < iCnt; i++)
+                    {
+                        segSz[i] = parseInt(document.getElementById('segNumA'+i).value);
+
+                        if (document.getElementById('headA'+i).checked == true)
+                        lgrHead[i] = true;
+                        else
+                        lgrHead[i] = false;
+                    }
+                }
+
+                if (c == document.getElementById("canvasB"))
+                {
+                    iniSegSz = parseInt(document.getElementById('iniSegNumB').value);
+
+                    if (iniSegSz == 1)
+                    document.getElementById('headB'+0).checked = true;
+
+                    for (i=0; i < iCnt; i++)
+                    {
+                        segSz[i] = parseInt(document.getElementById('segNumB'+i).value);
+
+                        if (document.getElementById('headB'+i).checked == true)
+                        lgrHead[i] = true;
+                        else
+                        lgrHead[i] = false;
+                    }
+                }
+
+                if (c == document.getElementById("canvasC"))
+                {
+                    iniSegSz = parseInt(document.getElementById('iniSegNumC').value);
+
+                    if (iniSegSz == 1)
+                    document.getElementById('headC'+0).checked = true;
+
+                    for (i=0; i < iCnt; i++)
+                    {
+                        segSz[i] = parseInt(document.getElementById('segNumC'+i).value);
+
+                        if (document.getElementById('headC'+i).checked == true)
+                        lgrHead[i] = true;
+                        else
+                        lgrHead[i] = false;
+                    }
+                }
+
+
+                if (lgrHead[0])
+                {
+                    headSz[0] = iniSegSz + 1;
+                    tailSz[0] = iniSegSz;
+                }
+                else
+                {
+                    headSz[0] = iniSegSz - 1;
+                    tailSz[0] = iniSegSz;
+                }
+
+                tailCnt[0] = segSz[0];
+
+
+                // find headSz, tailSz, and tailCnt values
+                for (i=1; i < iCnt; i++)
+                {
+                    tailSz[i] = headSz[i-1] + tailSz[i-1] * tailCnt[i-1];
+
+                    if (lgrHead[i])
+                    headSz[i] = tailSz[i] + tailSz[i-1];
+                    else
+                    headSz[i] = tailSz[i] - tailSz[i-1];
+
+                    tailCnt[i] = segSz[i];
+                }
+
+
+                // find the line coordinates
+                var x, y, xPrior, yPrior;
+                var xTailSeg;
+                var offsetSz = 0;
+                var flip_flop = 0; // off/on
+
+   
+                x = tailCnt[0] + 1;
+                y = headSz[0] + tailSz[0] * tailCnt[0];
+                
+                if (headSz[0] > tailSz[0])
+                {
+                    flip_flop = !flip_flop;
+
+                    if (flip_flop)
+                    offsetSz += headSz[0];
+                }
+                
+                if (c == document.getElementById("canvasA"))
+                addSpecA(headSz[0], tailSz[0], tailCnt[0], x, y, offsetSz);
+
+                if (c == document.getElementById("canvasB"))
+                addSpecB(headSz[0], tailSz[0], tailCnt[0], x, y, offsetSz);
+
+                if (c == document.getElementById("canvasC"))
+                addSpecC(headSz[0], tailSz[0], tailCnt[0], x, y, offsetSz);
+
+                xTailSeg = 1;
+                xPrior = x;
+                yPrior = y;
+                for (i=1; i < iCnt; i++)
+                {
+                    if (headSz[i] > tailSz[i])
+                    {
+                        x = xPrior * (tailCnt[i] + 1) + xTailSeg;
+                        y = yPrior * (tailCnt[i] + 1) + tailSz[i-1];
+
+                        flip_flop = !flip_flop;
+
+                        if (flip_flop)
+                        offsetSz += tailSz[i] + tailSz[i-1];
+                    }
+                    else
+                    {
+                        x = xPrior * (tailCnt[i] + 1) - xTailSeg;
+                        y = yPrior * (tailCnt[i] + 1) - tailSz[i-1];
+                        
+                        if (flip_flop)
+                        offsetSz += tailSz[i] - tailSz[i-1];
+                    }
+                    
+                    if (c == document.getElementById("canvasA"))
+                    addSpecA(headSz[i], tailSz[i], tailCnt[i], x, y, offsetSz);
+
+                    if (c == document.getElementById("canvasB"))
+                    addSpecB(headSz[i], tailSz[i], tailCnt[i], x, y, offsetSz);
+
+                    if (c == document.getElementById("canvasC"))
+                    addSpecC(headSz[i], tailSz[i], tailCnt[i], x, y, offsetSz);
+
+                    xTailSeg = xPrior;
+                    xPrior = x;
+                    yPrior = y;
+                }
+                
+                // double length for offset
+                if (offsetSz)
+                {
+                    x *= 2; 
+                    y *= 2;
+                }
+
+
+                // find segment colors
+                var j;
+                var segColors = new Array();
+                var iSegCol = 0;
+                var color = new Array();
+                var red = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+                var rInc = 0;
+                
+
+                for (i=0; i < tailSz[0]*tailCnt[0]; i++)
+                segColors[iSegCol++] = "00BB77";
+
+                for (i=0; i < headSz[0]; i++)
+                segColors[iSegCol++] = "0055FF";
+                
+                rInc = (rInc + 3) % 16; // increase red
+                
+                for (j=1; j < iCnt; j++)
+                {
+                    for (i=0; i < tailSz[j]*(tailCnt[j]-1); i++)
+                    segColors[iSegCol++] = red[rInc]+red[rInc] + segColors[i%tailSz[j]].slice(-4);
+
+                    rInc = (rInc + 3) % 16; // increase red
+
+                    for (i=0; i < headSz[j]; i++)
+                    segColors[iSegCol++] = red[rInc]+red[rInc] + "55FF";
+                }
+
+
+                for (i=0; i < y; i++)
+                color[i] = "#777777";
+
+                for (i=0; i < iSegCol; i++)
+                color[i+offsetSz] = "#"+segColors[i];
+
+
+                // resize canvas
+                if (x * 10 < scrollWindow.clientWidth)
+                c.width = scrollWindow.clientWidth;
+                else
+                c.width = x * 10;
+
+                if (y * 10 < scrollWindow.clientHeight)
+                c.height = scrollWindow.clientHeight;
+                else
+                c.height = y * 10;
+
+
+                drawLine(x, y, c.height, color, ctx);
+                
+
+                // get the xOffset
+                var xOffset = 0;
+                for (i=0; i < offsetSz; i++)
+                {
+                    var d = parseFloat(x) / y;
+                    xOffset += (parseInt((i+1) * d) != parseInt(i * d));
+                }
+                //console.debug("xOffset", xOffset);
+
+                if (c == document.getElementById("canvasA"))
+                {
+                    xOffsetA = xOffset;
+                    yOffsetA = offsetSz;
+                }
+                if (c == document.getElementById("canvasB"))
+                {
+                    xOffsetB = xOffset;
+                    yOffsetB = offsetSz;
+                }
+                if (c == document.getElementById("canvasC"))
+                {
+                    xOffsetC = xOffset;
+                    yOffsetC = offsetSz;
+                }
+
+                // save the state of canvas
+                if (c == document.getElementById("canvasA"))
+                {
+                    x = xStaticCur + xOffsetA*10;
+                    y = yStaticCur + yOffsetA*10;
+
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(x+5-1, c.height-y-10, 2, -c.height);
+                    ctx.fillRect(x+5-1, c.height-y, 2, c.height);
+                    ctx.fillRect(x, c.height-y-5-1, -c.width, 2);
+                    ctx.fillRect(x+10, c.height-y-5-1, +c.width, 2);
+                    ctx.beginPath();
+                    ctx.lineWidth = "1";
+                    ctx.strokeStyle = "red";
+                    ctx.rect(x, c.height-y-10, 10, 10);
+                    ctx.stroke();
+                    imageDataA = ctx.getImageData(0, 0, c.width, c.height);
+                }
+
+                if (c == document.getElementById("canvasB"))
+                {
+                    x = xStaticCur + xOffsetB*10;
+                    y = yStaticCur + yOffsetB*10;
+
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(x+5-1, c.height-y-10, 2, -c.height);
+                    ctx.fillRect(x+5-1, c.height-y, 2, c.height);
+                    ctx.fillRect(x, c.height-y-5-1, -c.width, 2);
+                    ctx.fillRect(x+10, c.height-y-5-1, +c.width, 2);
+                    ctx.beginPath();
+                    ctx.lineWidth = "1";
+                    ctx.strokeStyle = "red";
+                    ctx.rect(x, c.height-y-10, 10, 10);
+                    ctx.stroke();
+                    imageDataB = ctx.getImageData(0, 0, c.width, c.height);
+                }
+
+                if (c == document.getElementById("canvasC"))
+                {
+                    x = xStaticCur + xOffsetC*10;
+                    y = yStaticCur + yOffsetC*10;
+
+                    ctx.fillStyle = 'red';
+                    ctx.fillRect(x+5-1, c.height-y-10, 2, -c.height);
+                    ctx.fillRect(x+5-1, c.height-y, 2, c.height);
+                    ctx.fillRect(x, c.height-y-5-1, -c.width, 2);
+                    ctx.fillRect(x+10, c.height-y-5-1, +c.width, 2);
+                    ctx.beginPath();
+                    ctx.lineWidth = "1";
+                    ctx.strokeStyle = "red";
+                    ctx.rect(x, c.height-y-10, 10, 10);
+                    ctx.stroke();
+                    imageDataC = ctx.getImageData(0, 0, c.width, c.height);
+                }
+
+                scrollWindow.scrollTop = scrollWindow.scrollHeight;
+            }
+
+            function calcLineA()
+            {
+                var c = document.getElementById("canvasA");
+                var scrollWindow = document.getElementById('scrollWinA');
+                calcLine(c, iCntA, scrollWindow);
+            }
+
+            function calcLineB()
+            {
+                var c = document.getElementById("canvasB");
+                var scrollWindow = document.getElementById('scrollWinB');
+                calcLine(c, iCntB, scrollWindow);
+            }
+
+            function calcLineC()
+            {
+                var c = document.getElementById("canvasC");
+                var scrollWindow = document.getElementById('scrollWinC');
+                calcLine(c, iCntC, scrollWindow);
+            }
+
+            function drawCursor(event, c, imageData, x, y)
+            {
+                var ctx = c.getContext("2d");
+                
+                if (imageData)
+                ctx.putImageData(imageData, 0, 0);
+                else
+                return;
+
+                ctx.fillStyle = 'black';
+                ctx.fillRect(x+5-1, c.height-y-10, 2, -c.height);
+                ctx.fillRect(x+5-1, c.height-y, 2, c.height);
+                ctx.fillRect(x, c.height-y-5-1, -c.width, 2);
+                ctx.fillRect(x+10, c.height-y-5-1, +c.width, 2);
+                ctx.beginPath();
+                ctx.lineWidth = "1";
+                ctx.strokeStyle = "black";
+                ctx.rect(x, c.height-y-10, 10, 10);
+                ctx.stroke();
+
+                //console.debug(x, y);
+            }
+
+            function drawCursorA(event)
+            {
+                var c = document.getElementById("canvasA");
+                var rect = c.getBoundingClientRect();
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * c.width;
+                var y = c.height - (event.clientY - rect.top) / (rect.bottom - rect.top) * c.height;
+                x = Math.round(x / 10) * 10 - 10;
+                y = Math.round(y / 10) * 10;
+                
+                x -= xOffsetA*10;
+                y -= yOffsetA*10;
+
+                drawCursor(event, document.getElementById("canvasA"), imageDataA, x+xOffsetA*10, y+yOffsetA*10);
+                drawCursor(event, document.getElementById("canvasB"), imageDataB, x+xOffsetB*10, y+yOffsetB*10);
+                drawCursor(event, document.getElementById("canvasC"), imageDataC, x+xOffsetC*10, y+yOffsetC*10);
+            }
+
+            function drawCursorB(event)
+            {
+                var c = document.getElementById("canvasB");
+                var rect = c.getBoundingClientRect();
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * c.width;
+                var y = c.height - (event.clientY - rect.top) / (rect.bottom - rect.top) * c.height;
+                x = Math.round(x / 10) * 10 - 10;
+                y = Math.round(y / 10) * 10;
+                
+                x -= xOffsetB*10;
+                y -= yOffsetB*10;
+
+                drawCursor(event, document.getElementById("canvasA"), imageDataA, x+xOffsetA*10, y+yOffsetA*10);
+                drawCursor(event, document.getElementById("canvasB"), imageDataB, x+xOffsetB*10, y+yOffsetB*10);
+                drawCursor(event, document.getElementById("canvasC"), imageDataC, x+xOffsetC*10, y+yOffsetC*10);
+            }
+
+            function drawCursorC(event)
+            {
+                var c = document.getElementById("canvasC");
+                var rect = c.getBoundingClientRect();
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * c.width;
+                var y = c.height - (event.clientY - rect.top) / (rect.bottom - rect.top) * c.height;
+                x = Math.round(x / 10) * 10 - 10;
+                y = Math.round(y / 10) * 10;
+                
+                x -= xOffsetC*10;
+                y -= yOffsetC*10;
+
+                drawCursor(event, document.getElementById("canvasA"), imageDataA, x+xOffsetA*10, y+yOffsetA*10);
+                drawCursor(event, document.getElementById("canvasB"), imageDataB, x+xOffsetB*10, y+yOffsetB*10);
+                drawCursor(event, document.getElementById("canvasC"), imageDataC, x+xOffsetC*10, y+yOffsetC*10);
+            }
+
+            function staticCursorA(event)
+            {
+                var c = document.getElementById("canvasA");
+                var rect = c.getBoundingClientRect();
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * c.width;
+                var y = c.height - (event.clientY - rect.top) / (rect.bottom - rect.top) * c.height;
+                x = Math.round(x / 10) * 10 - 10;
+                y = Math.round(y / 10) * 10;
+                
+                x -= xOffsetA*10;
+                y -= yOffsetA*10;
+
+                xStaticCur = x;
+                yStaticCur = y;
+                calcLineA();
+                calcLineB();
+                calcLineC();
+            }
+            function staticCursorB(event)
+            {
+                var c = document.getElementById("canvasB");
+                var rect = c.getBoundingClientRect();
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * c.width;
+                var y = c.height - (event.clientY - rect.top) / (rect.bottom - rect.top) * c.height;
+                x = Math.round(x / 10) * 10 - 10;
+                y = Math.round(y / 10) * 10;
+                
+                x -= xOffsetB*10;
+                y -= yOffsetB*10;
+
+                xStaticCur = x;
+                yStaticCur = y;
+                calcLineA();
+                calcLineB();
+                calcLineC();
+            }
+            function staticCursorC(event)
+            {
+                var c = document.getElementById("canvasC");
+                var rect = c.getBoundingClientRect();
+                var x = (event.clientX - rect.left) / (rect.right - rect.left) * c.width;
+                var y = c.height - (event.clientY - rect.top) / (rect.bottom - rect.top) * c.height;
+                x = Math.round(x / 10) * 10 - 10;
+                y = Math.round(y / 10) * 10;
+                
+                x -= xOffsetC*10;
+                y -= yOffsetC*10;
+
+                xStaticCur = x;
+                yStaticCur = y;
+                calcLineA();
+                calcLineB();
+                calcLineC();
+            }
+        </script>
+    </body>
+</html>
