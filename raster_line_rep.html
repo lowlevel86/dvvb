@@ -1,0 +1,379 @@
+<html>
+    <head><title>Raster Line Representation</title></head>
+    <body>
+        <script>
+            var iCnt = 0;
+            var divSpecCtrls = new Array();
+
+            var divSpecCnt = 0;
+            var divSpecs = new Array();
+            
+
+            function addSpecControls()
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = '<center>Larger <input type="radio" id="head'+iCnt+'" name="head_tail'+iCnt+'" onchange="calcLine()" checked><label for="head">Head</label> <input type="radio" id="tail'+iCnt+'" name="head_tail'+iCnt+'" onchange="calcLine()"><label for="tail">Tail</label> | Tail Count: <select id="segNum'+iCnt+'" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></center><br>';
+                
+                document.getElementById("segControls").appendChild(customDiv);
+                divSpecCtrls[iCnt] = customDiv;
+                iCnt++;
+
+                calcLine();
+            }
+            
+            function delSpecControls()
+            {
+                if (iCnt)
+                {
+                    iCnt--;
+                    document.getElementById("segControls").removeChild(divSpecCtrls[iCnt]);
+                }
+
+                calcLine();
+            }
+
+            function addSpec(headSz, tailSz, tailCnt, x, y, offset)
+            {
+                var customDiv = document.createElement('div');
+
+                customDiv.id = 'content';
+                customDiv.innerHTML = "headSz:"+headSz+" tailSz:"+tailSz+" tailCnt:"+tailCnt+"<br>x:"+x+" y:"+y+" offset:"+offset+"<br><br>";
+                
+                document.getElementById("lineSpec").appendChild(customDiv);
+                divSpecs[divSpecCnt] = customDiv;
+                divSpecCnt++;
+            }
+
+            function delSpecs()
+            {
+                var i;
+
+                for (i=0; i < divSpecCnt; i++)
+                document.getElementById("lineSpec").removeChild(divSpecs[i]);
+                
+                divSpecCnt = 0;
+            }
+        </script>
+
+        <center>
+        <div id="scrollWin" style="height:80%;width:90%;border:1px solid #ccc;overflow:scroll;">
+        <canvas id="myCanvas">Your browser does not support the HTML5 canvas tag.</canvas>
+        </div>
+
+        <br>
+
+        <table style="width:100%;">
+        <tr><td>
+        
+        <center>
+        <button onclick="addSpecControls()">Add</button> <button onclick="delSpecControls()">Delete</button>
+
+        <br><br>
+
+        Initial Tail Size: <select id="iniSegNum" onchange="calcLine()"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select>
+        </center>
+
+        <p id="segControls"></p>
+
+        <hr>
+        Math:<br>
+        <center>[Find Next Coordinates]</center>
+        x = prior_x * (tailCnt + 1) +/- prior_prior_x<br>
+        y = prior_y * (tailCnt + 1) +/- prior_tailSz<br>
+        <br>
+        <center>[Draw a Line]</center>
+        d = X / Y;<br>
+        for (i=0; i < Y; i++)<br>
+        PutPixel(i * d, i); // PutPixel(int x, int y)<br>
+        <br>
+        <center>[Find Next Values]</center>
+        headSz = prior_headSz + prior_tailSz * prior_tailCnt +/- prior_tailSz<br>
+        tailSz = prior_headSz + prior_tailSz * prior_tailCnt<br>
+        <br>
+        <hr>
+        Notes:<br>
+        <br>
+        This document describes finding coordinates to represent a raster line.<br>
+        <br>
+        The offset is used to swap or rearrange the segments.<br>
+        <br>
+        When there is an offset the line size is doubled to account for it.<br>
+        <br>
+        The tail count can in reality be any integer to map any possible raster line.<br>
+        <br>
+        
+        </td><td style="vertical-align:top;border:1px solid #ccc;">
+        <center>Line Specification:</center>
+        <p id="lineSpec"></p>
+        </td></tr>
+        </table>
+
+        <script>
+            function drawLine(xL, yL, h, color, ctx)
+            {
+                var i, x, y, unit;
+                
+                unit = xL / yL;
+                
+                for (i=0; i < yL; i++)
+                {
+                    x = parseInt(i * unit);
+                    y = i;
+                    
+                    ctx.fillStyle = color[i];
+                    ctx.fillRect(x*10, h - y*10, 10, -10);
+                }
+            }
+
+            function matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offset)
+            {
+                var i, j, k;
+                var linePatt = new Array();
+                var bodyPatt = new Array();
+                var iPatt;
+                var pattSwap = new Object();
+                var pattPrior = new Object();
+
+                // find line pattern
+                var d = x / y;
+                var xA = parseInt(offset * d);
+                var xB;
+                for (i=0; i < y-1; i++)
+                {
+                    xB = xA;
+                    xA = parseInt((offset+i+1) * d);
+
+                    linePatt[i] = (xA != xB)?1:0;
+                }
+
+                // find body pattern
+                for (i=0; i < y-1; i++)
+                bodyPatt[i] = 0;
+
+                for (k=0; k < iCnt; k++)
+                {
+                    iPatt = 0;
+                    pattSwap = pattPrior;
+                    pattPrior = bodyPatt;
+                    bodyPatt = pattSwap;
+
+                    for (j=0; j < tailCnt[k]; j++)
+                    {
+                        for (i=0; i < tailSz[k]-1; i++)
+                        bodyPatt[iPatt++] = pattPrior[i];
+
+                        bodyPatt[iPatt++] = 1;
+                    }
+
+                    if (headSz[k] > tailSz[k])
+                    {
+                        for (i=0; i < (headSz[k]-tailSz[k])-1; i++) // i < prior tail
+                        bodyPatt[iPatt++] = pattPrior[i];
+
+                        bodyPatt[iPatt++] = (k)?1:0; // ini 0
+
+                        for (i=0; i < tailSz[k]-1; i++)
+                        bodyPatt[iPatt++] = pattPrior[i];
+                    }
+                    else
+                    {
+                        for (i=0; i < headSz[k]-1; i++)
+                        bodyPatt[iPatt++] = pattPrior[(tailSz[k]-headSz[k])+i]; // [prior tail + i]
+                    }
+                }
+
+                for (i=0; i < y-1; i++)
+                if (bodyPatt[i] != linePatt[i])
+                return 1;
+
+                //console.log("linePatt:", linePatt);
+                //console.log("bodyPatt:", bodyPatt);
+                return 0;
+            }
+
+            function calcLine()
+            {
+                var i;
+                var c = document.getElementById("myCanvas");
+                var ctx = c.getContext("2d");
+                var iniSegSz;
+                var segSz = new Array();
+                var lgrHead = new Array();
+                var headSz = new Array();
+                var tailSz = new Array();
+                var tailCnt = new Array();
+
+                ctx.clearRect(0, 0, c.width, c.height);
+                delSpecs();
+
+                if (iCnt == 0)
+                return;
+
+
+                // find initial headSz, tailSz, and tailCnt values
+                iniSegSz = parseInt(document.getElementById('iniSegNum').value);
+                
+                if (iniSegSz == 1)
+                document.getElementById('head'+0).checked = true;
+
+                for (i=0; i < iCnt; i++)
+                {
+                    segSz[i] = parseInt(document.getElementById('segNum'+i).value);
+
+                    if (document.getElementById('head'+i).checked == true)
+                    lgrHead[i] = true;
+                    else
+                    lgrHead[i] = false;
+                }
+
+                if (lgrHead[0])
+                {
+                    headSz[0] = iniSegSz + 1;
+                    tailSz[0] = iniSegSz;
+                }
+                else
+                {
+                    headSz[0] = iniSegSz - 1;
+                    tailSz[0] = iniSegSz;
+                }
+
+                tailCnt[0] = segSz[0];
+
+
+                // find headSz, tailSz, and tailCnt values
+                for (i=1; i < iCnt; i++)
+                {
+                    tailSz[i] = headSz[i-1] + tailSz[i-1] * tailCnt[i-1];
+
+                    if (lgrHead[i])
+                    headSz[i] = tailSz[i] + tailSz[i-1];
+                    else
+                    headSz[i] = tailSz[i] - tailSz[i-1];
+
+                    tailCnt[i] = segSz[i];
+                }
+
+
+                // find the line coordinates
+                var x, y, xPrior, yPrior;
+                var xPriorPrior;
+                var offsetSz = 0;
+                var testOffset;
+
+   
+                x = tailCnt[0] + 1;
+                y = headSz[0] + tailSz[0] * tailCnt[0];
+                
+                if (headSz[0] > tailSz[0])
+                offsetSz += headSz[0];
+                
+                addSpec(headSz[0], tailSz[0], tailCnt[0], x, y, offsetSz);
+
+                xPriorPrior = 1;
+                xPrior = x;
+                yPrior = y;
+                for (i=1; i < iCnt; i++)
+                {
+                    if (headSz[i] > tailSz[i])
+                    {
+                        x = xPrior * (tailCnt[i] + 1) + xPriorPrior;
+                        y = yPrior * (tailCnt[i] + 1) + tailSz[i-1];
+                    }
+                    else
+                    {
+                        x = xPrior * (tailCnt[i] + 1) - xPriorPrior;
+                        y = yPrior * (tailCnt[i] + 1) - tailSz[i-1];
+                    }
+
+                    testOffset = offsetSz;
+                    
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + tailSz[i] - tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + tailSz[i] + tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + headSz[i] - tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + headSz[i] + tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset - tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + tailSz[i-1];
+
+                    addSpec(headSz[i], tailSz[i], tailCnt[i], x, y, offsetSz);
+
+                    xPriorPrior = xPrior;
+                    xPrior = x;
+                    yPrior = y;
+                }
+                
+                // double length for offset
+                if (offsetSz)
+                {
+                    x *= 2; 
+                    y *= 2;
+                }
+
+
+                // find segment colors
+                var j;
+                var segColors = new Array();
+                var iSegCol = 0;
+                var color = new Array();
+                var red = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+                var rInc = 0;
+                
+
+                for (i=0; i < tailSz[0]*tailCnt[0]; i++)
+                segColors[iSegCol++] = "00BB77";
+
+                for (i=0; i < headSz[0]; i++)
+                segColors[iSegCol++] = "0055FF";
+                
+                rInc = (rInc + 3) % 16; // increase red
+                
+                for (j=1; j < iCnt; j++)
+                {
+                    for (i=0; i < tailSz[j]*(tailCnt[j]-1); i++)
+                    segColors[iSegCol++] = red[rInc]+red[rInc] + segColors[i%tailSz[j]].slice(-4);
+
+                    rInc = (rInc + 3) % 16; // increase red
+
+                    for (i=0; i < headSz[j]; i++)
+                    segColors[iSegCol++] = red[rInc]+red[rInc] + "55FF";
+                }
+
+
+                for (i=0; i < y; i++)
+                color[i] = "#777777";
+
+                for (i=0; i < iSegCol; i++)
+                color[i+offsetSz] = "#"+segColors[i];
+
+
+                // resize canvas
+                if (x * 10 < document.getElementById('scrollWin').clientWidth)
+                c.width = document.getElementById('scrollWin').clientWidth;
+                else
+                c.width = x * 10;
+
+                if (y * 10 < document.getElementById('scrollWin').clientHeight)
+                c.height = document.getElementById('scrollWin').clientHeight;
+                else
+                c.height = y * 10;
+
+
+                drawLine(x, y, c.height, color, ctx);
+                
+                document.getElementById('scrollWin').scrollTop = document.getElementById('scrollWin').scrollHeight;
+            }
+        </script>
+    </body>
+</html>
