@@ -127,13 +127,69 @@
                 }
             }
 
-            function getLinePattBit(x, y, loc)
+            function matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offset)
             {
-                var d = x / y;
+                var i, j, k;
+                var linePatt = new Array();
+                var bodyPatt = new Array();
+                var iPatt;
+                var pattSwap = new Object();
+                var pattPrior = new Object();
 
-                if (parseInt(loc * d) != parseInt((loc-1) * d))
+                // find line pattern
+                var d = x / y;
+                var xA = parseInt(offset * d);
+                var xB;
+                for (i=0; i < y-1; i++)
+                {
+                    xB = xA;
+                    xA = parseInt((offset+i+1) * d);
+
+                    linePatt[i] = (xA != xB)?1:0;
+                }
+
+                // find body pattern
+                for (i=0; i < y-1; i++)
+                bodyPatt[i] = 0;
+
+                for (k=0; k < iCnt; k++)
+                {
+                    iPatt = 0;
+                    pattSwap = pattPrior;
+                    pattPrior = bodyPatt;
+                    bodyPatt = pattSwap;
+
+                    for (j=0; j < tailCnt[k]; j++)
+                    {
+                        for (i=0; i < tailSz[k]-1; i++)
+                        bodyPatt[iPatt++] = pattPrior[i];
+
+                        bodyPatt[iPatt++] = 1;
+                    }
+
+                    if (headSz[k] > tailSz[k])
+                    {
+                        for (i=0; i < (headSz[k]-tailSz[k])-1; i++) // i < prior tail
+                        bodyPatt[iPatt++] = pattPrior[i];
+
+                        bodyPatt[iPatt++] = (k)?1:0; // ini 0
+
+                        for (i=0; i < tailSz[k]-1; i++)
+                        bodyPatt[iPatt++] = pattPrior[i];
+                    }
+                    else
+                    {
+                        for (i=0; i < headSz[k]-1; i++)
+                        bodyPatt[iPatt++] = pattPrior[(tailSz[k]-headSz[k])+i]; // [prior tail + i]
+                    }
+                }
+
+                for (i=0; i < y-1; i++)
+                if (bodyPatt[i] != linePatt[i])
                 return 1;
 
+                //console.log("linePatt:", linePatt);
+                //console.log("bodyPatt:", bodyPatt);
                 return 0;
             }
 
@@ -204,9 +260,7 @@
                 var x, y, xPrior, yPrior;
                 var xPriorPrior;
                 var offsetSz = 0;
-                var pattBitLoc;
-                var actualPattBit;
-                var idealPattBit;
+                var testOffset;
 
    
                 x = tailCnt[0] + 1;
@@ -233,91 +287,25 @@
                         y = yPrior * (tailCnt[i] + 1) - tailSz[i-1];
                     }
 
-                    // account different offsets
-                    if (headSz[i] > tailSz[i])
-                    {
-                        if (offsetSz + tailSz[i] < headSz[i])
-                        {
-                            // use a single line pattern bit to find if the head/tail pattern structure is ideal
-                            pattBitLoc = tailSz[i] * tailCnt[i] + headSz[i];
-                            actualPattBit = getLinePattBit(x, y, pattBitLoc);
-                            
-                            // use the prior line specification to get the ideal bit
-                            pattBitLoc = (pattBitLoc - (offsetSz + tailSz[i])) % tailSz[i];
-                            idealPattBit = getLinePattBit(xPrior, yPrior, pattBitLoc + offsetSz);
-                            
-                            if (actualPattBit == idealPattBit)
-                            {
-                            // use a single line pattern bit to find if the head/tail pattern structure is ideal
-                            pattBitLoc = tailSz[i];
-                            actualPattBit = getLinePattBit(x, y, pattBitLoc);
-                            
-                            // use the prior line specification to get the ideal bit
-                            pattBitLoc = (pattBitLoc - (offsetSz - tailSz[i-1])) % tailSz[i];
-                            idealPattBit = getLinePattBit(xPrior, yPrior, pattBitLoc + offsetSz);
-                            
-                            if (actualPattBit != idealPattBit)
-                            offsetSz += headSz[i];
-                            }
-                            else
-                            offsetSz += tailSz[i-1];
-                        }
-                        else
-                        {
-                            // use a single line pattern bit to find if the head/tail pattern structure is ideal
-                            pattBitLoc = tailSz[i] * tailCnt[i] + headSz[i];
-                            actualPattBit = getLinePattBit(x, y, pattBitLoc);
-                            
-                            // use the prior line specification to get the ideal bit
-                            pattBitLoc = (pattBitLoc - (offsetSz + headSz[i])) % tailSz[i];
-                            idealPattBit = getLinePattBit(xPrior, yPrior, pattBitLoc + offsetSz);
-                            
-                            if (actualPattBit != idealPattBit)
-                            offsetSz += tailSz[i];
-                        }
-                    }
-                    else
-                    {
-                        if (offsetSz + headSz[i] > tailSz[i])
-                        {
-                            // use a single line pattern bit to find if the head/tail pattern structure is ideal
-                            pattBitLoc = tailSz[i] * tailCnt[i] + headSz[i];
-                            actualPattBit = getLinePattBit(x, y, pattBitLoc);
-                            
-                            // use the prior line specification to get the ideal bit
-                            pattBitLoc = (pattBitLoc - (offsetSz + headSz[i])) % tailSz[i];
-                            idealPattBit = getLinePattBit(xPrior, yPrior, pattBitLoc + offsetSz);
-                            
-                            if (actualPattBit == idealPattBit)
-                            {
-                            // use a single line pattern bit to find if the head/tail pattern structure is ideal
-                            pattBitLoc = tailSz[i];
-                            actualPattBit = getLinePattBit(x, y, pattBitLoc);
-                            
-                            // use the prior line specification to get the ideal bit
-                            pattBitLoc = (pattBitLoc - offsetSz) % tailSz[i];
-                            idealPattBit = getLinePattBit(xPrior, yPrior, pattBitLoc + offsetSz);
+                    testOffset = offsetSz;
+                    
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + tailSz[i] - tailSz[i-1];
 
-                            if (actualPattBit != idealPattBit)
-                            offsetSz += headSz[i];
-                            }
-                            else
-                            offsetSz -= tailSz[i-1];
-                        }
-                        else if (offsetSz) // no offset needed if no prior offset
-                        {
-                            // use a single line pattern bit to find if the head/tail pattern structure is ideal
-                            pattBitLoc = tailSz[i] * tailCnt[i] + headSz[i];
-                            actualPattBit = getLinePattBit(x, y, pattBitLoc);
-                            
-                            // use the prior line specification to get the ideal bit
-                            pattBitLoc = (pattBitLoc - (offsetSz + headSz[i])) % tailSz[i];
-                            idealPattBit = getLinePattBit(xPrior, yPrior, pattBitLoc + offsetSz);
-                            
-                            if (actualPattBit != idealPattBit)
-                            offsetSz += tailSz[i];
-                        }
-                    }
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + tailSz[i] + tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + headSz[i] - tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + headSz[i] + tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset - tailSz[i-1];
+
+                    if (matchSpecToLine(headSz, tailSz, tailCnt, iCnt, x, y, offsetSz))
+                    offsetSz = testOffset + tailSz[i-1];
 
                     addSpec(headSz[i], tailSz[i], tailCnt[i], x, y, offsetSz);
 
