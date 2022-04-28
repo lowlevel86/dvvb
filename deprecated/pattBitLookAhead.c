@@ -48,9 +48,9 @@ int iniPattBitLookAhead(int iniTailSz, struct infer_line_spec *il, int loc)
 
 int pattBitLookAhead(struct spec *l, struct infer_line_spec *il, int loc)
 {
-   if (loc >= il->bodySzA)
+   if (loc > il->bodySzA)
    {
-      if (loc >= il->wholeTailSzB) // if in the head section
+      if (loc > il->wholeTailSzB) // if in the head section
       {
          loc -= il->wholeTailSzB;
 
@@ -63,10 +63,10 @@ int pattBitLookAhead(struct spec *l, struct infer_line_spec *il, int loc)
          loc += il->tailSzB - il->headSzB;
       }
 
-      loc = loc % il->tailSzB;
+      loc = (loc-1) % il->tailSzB + 1;
    }
 
-   if (loc >= il->wholeTailSzA) // if in the head section
+   if (loc > il->wholeTailSzA) // if in the head section
    {
       loc -= il->wholeTailSzA;
 
@@ -79,11 +79,11 @@ int pattBitLookAhead(struct spec *l, struct infer_line_spec *il, int loc)
       loc += il->tailSzA - il->headSzA;
    }
    
-   loc = loc % il->tailSzA;
+   loc = (loc-1) % il->tailSzA + 1;
    
-   if (loc)
-   return getLinePattBit(l->x, l->y, l->offset+loc);
-
+   if (loc == l->y)
    return 1;
+
+   return getLinePattBit(l->x, l->y, l->offset+loc);
 }
 
