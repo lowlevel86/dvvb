@@ -110,13 +110,11 @@
         <script>
             function drawLine(xL, yL, h, color, ctx)
             {
-                var i, x, y, unit;
-                
-                unit = xL / yL;
+                var i, x, y;
                 
                 for (i=0; i < yL; i++)
                 {
-                    x = parseInt(i * unit);
+                    x = parseInt(i * xL / yL);
                     y = i;
                     
                     ctx.fillStyle = color[i];
