@@ -80,9 +80,8 @@
         y = prior_y * (tailSegCnt + 1) +/- prior_tailSegSz<br>
         <br>
         <center>[Draw a Line]</center>
-        d = X / Y;<br>
         for (i=0; i < Y; i++)<br>
-        PutPixel(i * d, i); // PutPixel(int x, int y)<br>
+        PutPixel(i * X / Y, i); // PutPixel(int x, int y)<br>
         <br>
         <center>[Find Next Values]</center>
         headSz = prior_headSz + prior_tailSegSz * prior_tailSegCnt +/- prior_tailSegSz<br>
@@ -97,9 +96,9 @@
         <br>
         When there is an offset the line size is increased to account for it.<br>
         <br>
-            <s>The tail segment count can actually be any integer to map any possible raster line.</s><br>
+            The tail segment count can actually be any integer to map any possible raster line.<br>
         <br>
-            This technique does not map every possible raster line. 
+            The line being drawn uses an integer division.<br>
         <br>
         
         </td><td style="vertical-align:top;border:1px solid #ccc; padding: 8px 8px 8px 8px">
