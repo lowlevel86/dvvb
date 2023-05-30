@@ -1,0 +1,20 @@
+<HTML>
+<HEAD>
+<TITLE>Line Modeling State</TITLE>
+</HEAD>
+<BODY>
+<H4>
+There are 5 line modeling states:<BR>
+</H4>
+<ul>
+  <li>0 known segments are found, headSz and tailSegSz are unknown (only for initialization)</li>
+  <li>1 known segment is found, headSz and tailSegSz are unknown</li>
+  <li>1 known segment is found, only tailSegSz is known</li>
+  <li>2 known segments are found, headSz and tailSegSz are unknown, tailSz is unknown</li>
+  <li>2 known segments are found, headSz and tailSegSz are unknown, tailSz is known</li>
+</ul>
+<BR>
+After the last state, tailSz will be the new known segment. As the raster line is modeled, it will loop through 4 states. tailSz will equal either headSz or tailSegSz. tailSz plus or minus priorTailSegSz will equal either headSz or tailSegSz, whichever one has not been assigned.
+
+</BODY>
+</HTML>
