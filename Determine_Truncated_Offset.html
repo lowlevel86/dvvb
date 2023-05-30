@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Determine the Truncated Offset</title>
+<meta name="Generator" content="SciTE - www.Scintilla.org" />
+<style type="text/css">
+.S0 {
+	color: #808080;
+	font-size: 10pt;
+}
+.S2 {
+	font-family: '!Bitstream Vera Sans Mono';
+	color: #007F00;
+	font-size: 13pt;
+}
+.S4 {
+	color: #007F7F;
+	font-size: 10pt;
+}
+.S5 {
+	font-weight: bold;
+	color: #00007F;
+	font-size: 11pt;
+}
+.S10 {
+	font-weight: bold;
+	color: #000000;
+	font-size: 10pt;
+}
+span {
+	font-weight: bold;
+	font-family: '!Bitstream Vera Sans Mono';
+	color: #000000;
+	font-size: 13pt;
+}
+</style>
+</head>
+<body bgcolor="#FFFFFF">
+<span>
+trunOffset<span class="S0"> </span><span class="S2">-- truncated offset</span><br />
+iniSeg<span class="S0"> </span><span class="S2">-- initial segment</span><br />
+secSeg<span class="S0"> </span><span class="S2">-- second segment</span><br />
+<br />
+<span class="S5">if</span><span class="S0"> </span>iniSeg<span class="S0"> </span><span class="S10">==</span><span class="S0"> </span>secSeg<span class="S4">+1</span><span class="S0"> </span><span class="S5">then</span><br />
+<br />
+<span class="S0">&nbsp;&nbsp;&nbsp;</span>iniSeg<span class="S0"> </span><span class="S5">is the</span><span class="S0"> </span><span class="S5">size</span><span class="S0"> </span><span class="S5">of</span><span class="S0"> </span>secSeg<span class="S4">+1</span><br />
+<br />
+<br />
+<span class="S5">if</span><span class="S0"> </span>iniSeg<span class="S0"> </span><span class="S10">==</span><span class="S0"> </span>secSeg<span class="S0"> </span><span class="S5">then</span><br />
+<br />
+<span class="S0">&nbsp;&nbsp;&nbsp;</span>iniSeg<span class="S0"> </span><span class="S5">is the</span><span class="S0"> </span><span class="S5">size</span><span class="S0"> </span><span class="S5">of</span><span class="S0"> </span>secSeg<span class="S0"> </span><span class="S5">or</span><span class="S0"> </span>secSeg<span class="S4">+1</span><br />
+<br />
+<br />
+<span class="S5">if</span><span class="S0"> </span>iniSeg<span class="S0"> </span><span class="S10">&lt;</span><span class="S0"> </span>secSeg<span class="S0"> </span><span class="S5">then</span><br />
+<br />
+<span class="S0">&nbsp;&nbsp;&nbsp;</span>iniSeg<span class="S0"> </span><span class="S5">is the</span><span class="S0"> </span><span class="S5">size</span><span class="S0"> </span><span class="S5">of</span><span class="S0"> </span>secSeg<span class="S4">-1</span><span class="S0"> </span><span class="S5">or</span><span class="S0"> </span>secSeg<span class="S0"> </span><span class="S5">or</span><span class="S0"> </span>secSeg<span class="S4">+1</span><br />
+<span class="S0">&nbsp;&nbsp;&nbsp;</span><span class="S5">account</span><span class="S0"> </span>trunOffset<span class="S0"> </span><span class="S5">and</span><span class="S0"> </span><span class="S5">ignore</span><br />
+<span class="S0"></span></span>
+</body>
+</html>
