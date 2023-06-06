@@ -100,6 +100,14 @@ void newSegMd(struct line *l)
    l->tailSegCntNext++;
 }
 
+void undoSegMd(struct line *l)
+{
+   int tailSz = l->tailSegSz * l->tailSegCnt;
+
+   l->length -= tailSz + l->headSz;
+   l->tailSegCntNext--;
+}
+
 void incTailSegCnt(struct line *l)
 {
    l->tailSegCnt++;
@@ -110,6 +118,18 @@ void incTailSegCnt(struct line *l)
    l->y += l->tailSegSz;
 
    l->length += l->tailSegSz * (l->tailSegCntNext + 1);
+}
+
+void decTailSegCnt(struct line *l)
+{
+   l->tailSegCnt--;
+
+   if (l->x != 1)
+   l->x -= l->xPrior;
+
+   l->y -= l->tailSegSz;
+
+   l->length -= l->tailSegSz * (l->tailSegCntNext + 1);
 }
 
 void incPriorTailSegCnt(struct line *l)
@@ -142,13 +162,36 @@ void incPriorTailSegCnt(struct line *l)
    l->length += l->tailSegSzPrior * (l->tailSegCnt + 1) * (l->tailSegCntNext + 1);
 }
 
-void truncate(struct line *l)
+void truncate(struct line *l, int sz)
 {
-   l->offset++;
-   l->length--;
+   l->offset += sz;
+   l->length -= sz;
 }
 
-void extend(struct line *l)
+void undoTruncate(struct line *l, int sz)
 {
-   l->length++;
+   l->offset -= sz;
+   l->length += sz;
+}
+
+void extend(struct line *l, int sz)
+{
+   l->length += sz;
+}
+
+void convertLgToSm(struct line *l)
+{
+   if (l->offsetFlipFlop)
+   l->offset -= l->headSz;
+
+   l->offsetFlipFlop = !l->offsetFlipFlop;
+
+   l->x -= l->xPriorPrior * 2;
+   l->y -= l->tailSegSzPrior * 2;
+   l->headSz -= l->tailSegSzPrior * 2;
+   
+   if (l->offsetFlipFlop)
+   l->offset += l->headSz;
+
+   l->length -= l->tailSegSzPrior * 2;
 }
