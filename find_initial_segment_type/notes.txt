@@ -1,0 +1,9 @@
+Determine if the initial segment type is small, equal, or large.
+
+Moving from a head section towards a tail section and then toward another head section or maybe tail section...there is an exact location where it is possible to determine if the section will be a head or a tail without going through the entire section.
+
+>ht_determinant = y + offset - (tailSegSz * flipflop)
+
+small ht_determinant = ht_determinant
+medium ht_determinant = ht_determinant + tailSegSz
+large ht_determinant = ht_determinant + tailSegSz*2, use to determine if it is a line?
